@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+.ipynb_checkpoints/
+venv/
+.venv/
+env/
+ENV/
+
+# Jupyter
+.jupyter/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Environment / secrets
+.env
+.env.local
+
+# Model artifacts (regenerate, don't commit large binaries)
+*.pkl
+*.joblib
+models/*.txt
+!models/.gitkeep
+
+# Build
+dist/
+build/
+*.egg-info
