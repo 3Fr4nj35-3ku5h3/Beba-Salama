@@ -219,6 +219,7 @@ a{color:inherit;text-decoration:none}
   transition:all var(--t) var(--ease);
 }
 .theme-btn:hover{background:var(--bg2);border-color:var(--border2)}
+#thbtn2{display:none}
 
 .hamburger{
   display:none;flex-direction:column;gap:5px;
@@ -553,10 +554,12 @@ input[type=range]{
 
 /* Result */
 .result{
-  background:var(--ink);color:var(--bg);
+  background:var(--surface);color:var(--ink);
+  border:1px solid var(--border);
   border-radius:var(--r);padding:36px;
   display:flex;flex-direction:column;gap:20px;
   box-shadow:var(--shadowL);
+  transition:background .35s,color .35s,border-color .35s;
 }
 .r-score-wrap{text-align:center}
 .r-score{
@@ -572,17 +575,18 @@ input[type=range]{
 .r-bars{display:flex;flex-direction:column;gap:12px}
 .rb-meta{
   display:flex;justify-content:space-between;
-  font-size:11px;color:rgba(255,255,255,.4);margin-bottom:5px;
+  font-size:11px;color:var(--dim);margin-bottom:5px;
 }
-.rb-meta span:last-child{color:rgba(255,255,255,.85);font-family:'DM Mono',monospace}
-.rb-track{height:2px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
+.rb-meta span:last-child{color:var(--ink2);font-family:'DM Mono',monospace}
+.rb-track{height:2px;background:var(--border);border-radius:2px;overflow:hidden}
 .rb-fill{height:100%;border-radius:2px;transition:width .7s cubic-bezier(.4,0,.2,1)}
 .r-insight{
-  background:rgba(255,255,255,.05);
-  border-left:2px solid var(--red);
+  background:var(--s2);
+  border:1px solid var(--border);
+  border-left:2.5px solid var(--red);
   padding:14px 18px;border-radius:0 8px 8px 0;
   font-size:13px;line-height:1.75;
-  color:rgba(255,255,255,.72);
+  color:var(--ink2);
 }
 
 /* ════════════════════════════════════════
@@ -719,13 +723,15 @@ footer{
 ════════════════════════════════════════ */
 @media(max-width:1024px){
   .nav{padding:0 28px}
-  .nav-center,.nav-right .theme-btn{display:none}
+  .nav-center{display:none}
+  #thbtn{display:none}
   .hamburger{display:flex}
   .nav-right{gap:4px}
-  .theme-btn-mob{
+  #thbtn2{
+    display:flex;
     width:36px;height:36px;border-radius:8px;
     background:var(--s2);border:1px solid var(--border);
-    display:flex!important;align-items:center;justify-content:center;
+    align-items:center;justify-content:center;
     cursor:pointer;font-size:15px;transition:all var(--t);
   }
   .hero{grid-template-columns:1fr;padding:80px 36px 52px;gap:40px}
@@ -807,7 +813,7 @@ footer{
     <button class="theme-btn" id="thbtn" onclick="toggleTheme()" title="Toggle theme">
       <span id="th-icon">🌙</span>
     </button>
-    <button class="theme-btn theme-btn-mob" style="display:none" id="thbtn2" onclick="toggleTheme()">
+    <button class="theme-btn" id="thbtn2" onclick="toggleTheme()" title="Toggle theme">
       <span id="th-icon2">🌙</span>
     </button>
     <button class="hamburger" id="hburg" onclick="toggleDrawer()" aria-label="Menu">
@@ -824,6 +830,9 @@ footer{
   <button class="nl" onclick="jumpTo('risk');closeDrawer()">Risk Check</button>
   <button class="nl" onclick="jumpTo('methodology');closeDrawer()">Method</button>
   <button class="nl" onclick="jumpTo('findings');closeDrawer()">Findings</button>
+  <button class="nl" id="drawer-theme-btn" onclick="toggleTheme()" style="border-top:1px solid var(--border);margin-top:6px;padding-top:16px;display:flex;align-items:center;gap:8px;color:var(--red)">
+    <span id="th-icon3">🌙</span> <span id="th-label3">Switch to Dark Mode</span>
+  </button>
 </div>
 
 <!-- ════ HERO ════ -->
@@ -1171,10 +1180,12 @@ let leafMap, mapLyr, densLyr, densOn=false, activeFlt='all';
 
 function applyTheme(d) {
   html.setAttribute('data-theme', d?'dark':'light');
-  ['th-icon','th-icon2'].forEach(id=>{
+  ['th-icon','th-icon2','th-icon3'].forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.textContent = d?'☀️':'🌙';
   });
+  const lbl = document.getElementById('th-label3');
+  if(lbl) lbl.textContent = d ? 'Switch to Light Mode' : 'Switch to Dark Mode';
   localStorage.setItem('bs-t', d?'dark':'light');
   updateChartThemes();
   buildHeatmap();
