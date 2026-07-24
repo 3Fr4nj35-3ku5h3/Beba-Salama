@@ -625,6 +625,40 @@ input[type=range]{
 .formula-box .feq{color:var(--ink);font-size:14px;font-weight:500;margin-bottom:4px}
 .fw{color:var(--red)} .fg{color:var(--green)} .fa{color:var(--amber)}
 
+.results-panel{
+  background:var(--grn10);border:1.5px solid rgba(26,104,64,.25);
+  border-radius:var(--r);padding:32px;margin-bottom:24px;
+}
+[data-theme="dark"] .results-panel{border-color:rgba(52,200,122,.3)}
+.results-title{
+  font-family:'Syne',sans-serif;font-weight:700;
+  font-size:15px;color:var(--green);
+  margin-bottom:18px;display:flex;align-items:center;gap:10px;
+}
+.results-stats{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:18px;
+  margin-bottom:20px;
+}
+.rp-stat{}
+.rp-num{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:28px;color:var(--ink);line-height:1;
+  letter-spacing:-.02em;margin-bottom:5px;
+}
+.rp-label{font-size:11px;color:var(--dim);line-height:1.4}
+.results-text{
+  font-size:13px;color:var(--ink2);line-height:1.75;
+  font-weight:300;border-top:1px solid rgba(26,104,64,.2);
+  padding-top:18px;
+}
+.results-text code{
+  font-family:'DM Mono',monospace;font-size:12px;
+  background:var(--s2);padding:2px 6px;border-radius:4px;
+}
+@media(max-width:768px){
+  .results-stats{grid-template-columns:1fr 1fr}
+}
+
 .honest-wrap{
   background:var(--red10);border:1.5px solid var(--red20);
   border-radius:var(--r);padding:32px;
@@ -1059,19 +1093,32 @@ footer{
     </div>
     <div class="mc cg">
       <span class="mc-icon">🗺️</span>
-      <div class="mc-title">The Risk Checker Model</div>
-      <p class="mc-text">The route risk score combines four factors — calibrated against eleven years of crash patterns.<br><br>
+      <div class="mc-title">The Interactive Risk Checker</div>
+      <p class="mc-text">The route risk score above combines four factors — calibrated against eleven years of crash patterns — for instant, client-side results with no server round-trip.<br><br>
         <strong>Route danger index (35%)</strong> — crash density per corridor<br>
         <strong>Time of day risk (30%)</strong> — hourly severity profile<br>
         <strong>Vehicle vulnerability (25%)</strong> — relative injury exposure by mode<br>
         <strong>Day type factor (10%)</strong> — weekly and holiday patterns<br><br>
-        This is a <strong>calibrated heuristic model</strong>, not yet the trained LightGBM classifier in active development. Scores are data-grounded and directionally accurate — treat them as risk signals, not precise predictions.</p>
+        This is a <strong>calibrated heuristic</strong>, built for speed in the browser. The validated, trained classifier — the one whose real evaluation metrics appear below — runs in the analysis pipeline (<code>src/train_model.py</code>) and is the version any deployment decision should be based on.</p>
     </div>
     <div class="mc cp">
       <span class="mc-icon">🎯</span>
       <div class="mc-title">Who Pays for This</div>
       <p class="mc-text"><strong>Passengers</strong> — free web tool. Check route risk before boarding with time-of-day awareness most Kenyan commuters have never had access to.<br><br><strong>PSV Insurers</strong> — B2B SaaS. Route-level risk scoring as an underwriting input for pricing public transport vehicle coverage more precisely than vehicle age alone. This is the revenue model.<br><br><strong>NTSA and Government</strong> — policy tool. Evidence-based corridor identification for enforcement deployment and infrastructure investment prioritisation. Long-term partnership play.</p>
     </div>
+  </div>
+
+  <div class="results-panel">
+    <div class="results-title">✅ The Trained Classifier — Real, Validated Results</div>
+    <div class="results-stats">
+      <div class="rp-stat"><div class="rp-num">0.61</div><div class="rp-label">AUC-ROC<br>on held-out test data</div></div>
+      <div class="rp-stat"><div class="rp-num">52%</div><div class="rp-label">Recall on high-risk class<br>at tuned threshold</div></div>
+      <div class="rp-stat"><div class="rp-num">24,851</div><div class="rp-label">Training crashes<br>6,213 held out for testing</div></div>
+      <div class="rp-stat"><div class="rp-num">8</div><div class="rp-label">Features used<br>time + location only</div></div>
+    </div>
+    <p class="results-text">
+      A LightGBM classifier trained on <code>src/train_model.py</code>, evaluated with a proper 80/20 stratified split. Three candidate features — matatu flag, motorcycle flag, and report count — were deliberately excluded after we proved they leak the target: 1,456 out of 1,456 crashes with 3+ reports and no other severity flags were automatically labelled high-risk purely by the formula that built the label. Including them pushed AUC to an inflated 0.81; excluding them gives the honest 0.61 above. Latitude and longitude are the two strongest predictors, followed by hour of day. SHAP values for individual predictions and the full leakage investigation are documented step-by-step in <code>notebooks/03_model_training.ipynb</code>.
+    </p>
   </div>
 
   <div class="honest-wrap">
@@ -1093,51 +1140,51 @@ footer{
   <p class="sec-sub">Not assumptions. Each finding is derived directly from 31,064 crash records spanning eleven years of Kenyan roads.</p>
   <div class="findings">
     <div class="finding">
-      <div class="fi">01 </div>
+      <div class="fi">01</div>
       <div>
-        <div class="f-pills"><span class="pill pr"> Peak severity: 05:00</span><span class="pill pa">Counter-intuitive</span></div>
-        <div class="f-title"> 5am is the deadliest hour — not midnight</div>
-        <p class="f-text"> Conventional wisdom assumes late night is most dangerous. The data disagrees. 5am registers the highest average crash severity of any hour — when long-distance trucks completing overnight runs, early matatus, and boda bodas converge on empty roads with maximally fatigued drivers and near-zero emergency response capacity.</p>
+        <div class="f-pills"><span class="pill pr">Peak severity: 05:00</span><span class="pill pa">Counter-intuitive</span></div>
+        <div class="f-title">5am is the deadliest hour — not midnight</div>
+        <p class="f-text">Conventional wisdom assumes late night is most dangerous. The data disagrees. 5am registers the highest average crash severity of any hour — when long-distance trucks completing overnight runs, early matatus, and boda bodas converge on empty roads with maximally fatigued drivers and near-zero emergency response capacity.</p>
       </div>
     </div>
     <div class="finding">
-      <div class="fi">02 </div>
+      <div class="fi">02</div>
       <div>
-        <div class="f-pills"><span class="pill pr"> Night: 11.0% fatal</span><span class="pill pg">Day: 6.9% fatal</span></div>
-        <div class="f-title"> A night crash is 60% more likely to kill you</div>
-        <p class="f-text"> The gap is structural, not marginal. Lower visibility, higher speeds on quieter roads, delayed emergency response, and driver fatigue compound into a 60% elevation in mortality probability. Every journey between 9pm and 4am carries this invisible premium that most Kenyan commuters are never told about.</p>
+        <div class="f-pills"><span class="pill pr">Night: 11.0% fatal</span><span class="pill pg">Day: 6.9% fatal</span></div>
+        <div class="f-title">A night crash is 60% more likely to kill you</div>
+        <p class="f-text">The gap is structural, not marginal. Lower visibility, higher speeds on quieter roads, delayed emergency response, and driver fatigue compound into a 60% elevation in mortality probability. Every journey between 9pm and 4am carries this invisible premium that most Kenyan commuters are never told about.</p>
       </div>
     </div>
     <div class="finding">
-      <div class="fi">03 </div>
+      <div class="fi">03</div>
       <div>
-        <div class="f-pills"><span class="pill pr"> Sunday: highest fatality rate</span><span class="pill pa">Friday: highest volume</span></div>
-        <div class="f-title"> Sunday kills more. Friday crashes more. Two different problems.</div>
-        <p class="f-text"> Friday carries the highest raw crash volume — end-of-week travel, social commuting, school runs. Sunday's lower volume conceals a dramatically higher fatality rate, driven by long-distance inter-county journeys, alcohol involvement, and reduced medical access in rural areas. High volume and high lethality require different interventions.</p>
+        <div class="f-pills"><span class="pill pr">Sunday: highest fatality rate</span><span class="pill pa">Friday: highest volume</span></div>
+        <div class="f-title">Sunday kills more. Friday crashes more. Two different problems.</div>
+        <p class="f-text">Friday carries the highest raw crash volume — end-of-week travel, social commuting, school runs. Sunday's lower volume conceals a dramatically higher fatality rate, driven by long-distance inter-county journeys, alcohol involvement, and reduced medical access in rural areas. High volume and high lethality require different interventions.</p>
       </div>
     </div>
     <div class="finding">
-      <div class="fi">04 </div>
+      <div class="fi">04</div>
       <div>
-        <div class="f-pills"><span class="pill pa"> 2,541 crashes</span><span class="pill pa">8.2% of all incidents</span></div>
-        <div class="f-title"> Matatus carry a disproportionate share of Kenya's road death</div>
-        <p class="f-text"> Public service vehicles appear in 8.2% of all recorded crash events. Given 14 seats per matatu, each incident carries a fundamentally different human cost than a private vehicle crash. The dataset cannot fully capture this multiplier effect — the true human cost is higher than the incident count implies.</p>
+        <div class="f-pills"><span class="pill pa">2,541 crashes</span><span class="pill pa">8.2% of all incidents</span></div>
+        <div class="f-title">Matatus carry a disproportionate share of Kenya's road death</div>
+        <p class="f-text">Public service vehicles appear in 8.2% of all recorded crash events. Given 14 seats per matatu, each incident carries a fundamentally different human cost than a private vehicle crash. The dataset cannot fully capture this multiplier effect — the true human cost is higher than the incident count implies.</p>
       </div>
     </div>
     <div class="finding">
-      <div class="fi">05 </div>
+      <div class="fi">05</div>
       <div>
-        <div class="f-pills"><span class="pill pr"> Peak: 6,101 in 2015</span><span class="pill pg">Recent: 1,805 in 2022</span></div>
-        <div class="f-title"> Crash volume has fallen since 2015 — but the work is far from done</div>
-        <p class="f-text"> A meaningful downward trend from the 2015 peak reflects road safety interventions, infrastructure improvements, and enforcement campaigns. However, 1,805 recorded incidents in 2022 — in a dataset that captures only a fraction of total crashes — means progress and crisis coexist.</p>
+        <div class="f-pills"><span class="pill pr">Peak: 6,101 in 2015</span><span class="pill pg">Recent: 1,805 in 2022</span></div>
+        <div class="f-title">Crash volume has fallen since 2015 — but the work is far from done</div>
+        <p class="f-text">A meaningful downward trend from the 2015 peak reflects road safety interventions, infrastructure improvements, and enforcement campaigns. However, 1,805 recorded incidents in 2022 — in a dataset that captures only a fraction of total crashes — means progress and crisis coexist.</p>
       </div>
     </div>
     <div class="finding">
-      <div class="fi">06 </div>
+      <div class="fi">06</div>
       <div>
-        <div class="f-pills"><span class="pill pr"> 5,206 high-risk events</span><span class="pill pr">16.8% of crashes</span></div>
-        <div class="f-title"> One in six crashes is predictable before it happens</div>
-        <p class="f-text"> Using a composite severity model — weighting fatality indicators, pedestrian involvement, vehicle type, and corroborating report volume — 16.8% of all crashes carry a high-severity classification. Critically, all inputs (time, location, vehicle type, day) are known before the journey begins. Risk is not random. It is predictable — and therefore preventable. This is the core insight Beba Salama is built on.</p>
+        <div class="f-pills"><span class="pill pr">5,206 high-risk events</span><span class="pill pr">16.8% of crashes</span></div>
+        <div class="f-title">One in six crashes is predictable before it happens</div>
+        <p class="f-text">Using a composite severity model — weighting fatality indicators, pedestrian involvement, vehicle type, and corroborating report volume — 16.8% of all crashes carry a high-severity classification. Critically, all inputs (time, location, vehicle type, day) are known before the journey begins. Risk is not random. It is predictable — and therefore preventable. This is the core insight Beba Salama is built on.</p>
       </div>
     </div>
   </div>
