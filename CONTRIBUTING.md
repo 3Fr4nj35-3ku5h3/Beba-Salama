@@ -22,5 +22,3 @@ This is a team capstone project — a few ground rules so we don't step on each 
 - Any cleaning or feature engineering goes in `src/`, not ad hoc in a notebook that never gets committed.
 - If you add a new data source, document it in `data/README.md` with its citation/license terms.
 
-## Before your mentor session
-- Make sure `main` reflects your actual current status — don't let uncommitted work sit on someone's laptop before a check-in.
