@@ -32,7 +32,7 @@ Much of the available evidence is fragmented: police reports, hospital data, and
 
 Between **August 2012 and July 2023**, the World Bank / Ma3Route programme produced a large geolocated dataset of Kenyan road crashes derived from crowdsourced reports. Combined with Kenya Police records published via the Humanitarian Data Exchange (HDX), this material makes it possible to study **when and where** high-severity incidents concentrate — and to build tools that surface that knowledge for everyday decisions.
 
-**Beba Salama** ("travel safely") turns those data into:
+**Beba Salama** turns those data into:
 
 1. An interactive **dashboard** (map, blackspot zones, analytics, findings)
 2. An honest **machine learning classifier** for high-severity crash context (time and location only)
@@ -344,16 +344,6 @@ df = engineer_features(df)
 
 8. Ngao Labs — Foundations of Data Science & AI Bootcamp (with DataCamp).  
    https://ngaolabs.org
-
----
-
-## Team
-
-- **Francis Kuria** — Data engineering, feature pipeline, modelling, dashboard
-- *[Teammate]* — *[role]*
-- **Mentor:** *[name]*
-
-*(Update names and roles for your cohort.)*
 
 ---
 
